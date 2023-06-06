@@ -1,0 +1,3 @@
+{:group-id "org.clojars.patbrown"
+ :artifact-id "bob-dylan"
+ :scm-url "https://github.com/patbrown/bob-dylan"}
