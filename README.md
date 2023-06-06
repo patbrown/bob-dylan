@@ -30,7 +30,7 @@
 - [How can I help?](#contribute)
 - [Did you show gratitude?](#gratitude)
 
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.patbrown/bob-dylan.svg)](https://clojars.org/org.clojars.patbrown/bob-dylan)
+[![Clojars Project](https://img.shields.io/clojars/v/tools.drilling/bob-dylan.svg)](https://clojars.org/tools.drilling/bob-dylan)
 
 ## What is it? <a name = "what"></a>
 ## Why does it exist? <a name = "why"></a>
