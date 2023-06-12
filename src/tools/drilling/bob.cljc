@@ -143,6 +143,41 @@
        (dir-add $ merge-ident {:chan merge-ch
                                :merges chs-mapv})))))
 
+(defn default-consumer
+  ([m] (let [{:keys [ch f]} m] (default-consumer ch f)))
+  ([ch f]
+   (a/go-loop []
+     (when-let [evt (a/<! ch)]
+       (f evt)
+       (recur)))))
+
+(defn stoppable-consumer [ch f]
+  (a/go-loop
+   (loop []
+     (let [evt (a/<! ch)]
+       (when (not= :stop evt)
+         (f evt)
+         (recur))))))
+
+(def consumer-reg
+  {:default default-consumer
+   :stoppable stoppable-consumer})
+
+(defn add-consumer!
+  "Adds a consumer to a channel."
+  ([m] (let [{:keys [bob id ln consumer-type message-fn]} m]
+         (add-consumer! bob id ln consumer-type message-fn)))
+  ([bob consumer-ident ch-ident consumer-type message-fn]
+   (let [ch (get-in bob ch-ident)
+         consumer-fn (consumer-type consumer-reg)
+         _ (consumer-fn ch message-fn)]
+     (as-> bob $
+       (add-chan! $ consumer-ident ch)
+       (dir-add $ consumer-ident {:chan ch
+                                  :consumer-type consumer-type
+                                  :message-fn message-fn})
+       (dir-add $ ch-ident consumer-ident consumer-fn)))))
+
 (defn- clone-coord-ident-for
   "Used in making mixers."
   [ns full-ident]
@@ -238,7 +273,8 @@
    :<pub add-pub!
    :<sub add-sub!
    :<merge add-merge!
-   :<mixer add-mixer!})
+   :<mixer add-mixer!
+   :<consumer add-consumer!})
 
 (defn id->f
   "Takes an id and returns the function that creates, wires, and adds it to the bulletin board."
