@@ -154,7 +154,7 @@
 (defn stoppable-consumer [ch f]
   (a/go-loop
    (loop []
-     (let [evt (a/<! ch)]
+     (when-let [evt (a/<! ch)]
        (when (not= :stop evt)
          (f evt)
          (recur))))))
